@@ -1,13 +1,16 @@
 const fs = require('fs')
 const path = require('path')
+const util = require('util')
+
 const xml2js = require('xml2js')
 
+const { PATH_SEPARATOR } = require('./constants')
+
 const parser = new xml2js.Parser();
-const content = fs.readFileSync(path.resolve(__dirname, 'structure_released.xml'))
-const result = parser.parseString(content, (err, result) => {
-  const x = linearNodes(result.ImageNetStructure.synset[0], null)
-  console.log(JSON.stringify(x, null, 2))
-})
+const content = fs.readFileSync(path.resolve(__dirname, '../data/structure_released.xml'))
+
+const parseXml = util.promisify(parser.parseString)
+const parsedData = () => parseXml(content)
 
 function linearNodes(node, nameFromAbove) {
   let nameFromRoot = [nameFromAbove, node['$'].words].join(PATH_SEPARATOR)
@@ -27,4 +30,10 @@ function linearNodes(node, nameFromAbove) {
     }
   }
   return data
+}
+
+module.exports = {
+  linearNodes,
+  parsedData,
+  parseXml,
 }
