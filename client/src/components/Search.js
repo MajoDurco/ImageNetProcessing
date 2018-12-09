@@ -21,10 +21,8 @@ const Search = (props) => {
       hostname: 'localhost',
       pathname: 'search/',
       port: 8080,
-      query: { text: getSearchExpression() }
+      query: { name: getSearchExpression() }
     })
-    console.log(queryUrl)
-    console.log('SEATCH')
     const { data } = await axios(queryUrl)
     setNodes(data)
     setFetchingStatus(false)
@@ -37,7 +35,7 @@ const Search = (props) => {
   const search = (event) => {
     event.preventDefault()
     const queryUrl = url.format({
-      query: { text: inputText }
+      query: { name: inputText }
     })
     props.history.push(queryUrl)
     setFetchingStatus(true)

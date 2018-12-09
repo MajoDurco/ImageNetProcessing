@@ -31,7 +31,7 @@ rootRouter.get('/save', async (req, res) => {
 
 rootRouter.get('/search', async (req, res) => {
   try {
-    const result = await searchData(req.query.text)
+    const result = await searchData(req.query)
     res.send(result)
   } catch (err) {
     console.error(err)

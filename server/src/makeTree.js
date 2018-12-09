@@ -1,16 +1,5 @@
 const { PATH_SEPARATOR } = require('./constants')
-
-function head(array) {
-  return array.length > 1 ? array[0]: null
-}
-
-function splitNamePath(namePath) {
-  return namePath.split(PATH_SEPARATOR)
-}
-
-function getParentAndMyName(pathNames) {
-  return splitNamePath(pathNames).slice(-2)
-}
+const { head, splitNamePath , getParentAndMyName } = require('./utils')
 
 function createNewNode(id, name, size, childrens=true) {
   const newNode = { id, name, size }
