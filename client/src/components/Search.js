@@ -7,13 +7,13 @@ import SearchNode from './SearchNode'
 const Search = (props) => {
   const getSearchExpression = () => {
     const { query } = url.parse(props.location.search, true)
-    return query.text
+    return query.name
   }
 
   const [inputText, onInputChange] = useState(getSearchExpression())
   const [nodes, setNodes] = useState([])
   const [isFetching, setFetchingStatus] = useState(true)
-
+  const [allFetched, setAllFetched] = useState(false)
 
   const getSearchResults = async () => {
     const queryUrl = url.format({
@@ -32,7 +32,7 @@ const Search = (props) => {
     getSearchResults()
   }, [])
 
-  const search = (event) => {
+  const onSearchClick = (event) => {
     event.preventDefault()
     const queryUrl = url.format({
       query: { name: inputText }
@@ -43,16 +43,29 @@ const Search = (props) => {
     getSearchResults()
   }
 
+  const loadMore = async () => {
+    const queryUrl = url.format({
+      query: { name: inputText, lastId: nodes[nodes.length - 1]._id }
+    })
+    console.log(queryUrl)
+    const { data } = await axios(queryUrl)
+    if (nodes.length + data.length === nodes.length) setAllFetched(true)
+    else setNodes([...nodes, ...data])
+  }
+
   return (
     <div>
       <h1>search</h1>
       <form>
         <input type="text" value={inputText} onChange={(event) => onInputChange(event.target.value)}/>
-        <button onClick={search}>Search</button>
+        <button onClick={onSearchClick}>Search</button>
       </form>
       { isFetching
         ? <div className="loader" />
         : nodes.map((node) => <SearchNode key={node._id} {...node} />)
+      }
+      { Boolean(nodes.length) && !allFetched &&
+        <button onClick={loadMore}>LoadMore</button>
       }
     </div>
   )
