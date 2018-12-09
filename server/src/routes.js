@@ -5,6 +5,7 @@ const rootRouter = express.Router()
 
 const { saveData } = require('./services/saveData')
 const { loadData } = require('./services/loadData')
+const { searchData } = require('./services/searchData')
 
 rootRouter.get('/', async (req, res) => {
   try {
@@ -21,6 +22,17 @@ rootRouter.get('/save', async (req, res) => {
   try {
     saveData()
     res.send("Data were saved")
+  } catch (err) {
+    console.error(err)
+    res.status(500)
+    res.send('Could not save the data to DB')
+  }
+})
+
+rootRouter.get('/search', async (req, res) => {
+  try {
+    const result = await searchData(req.query.text)
+    res.send(result)
   } catch (err) {
     console.error(err)
     res.status(500)

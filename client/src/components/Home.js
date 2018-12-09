@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
+import url from 'url'
 
 import Node from './Node'
 
@@ -89,25 +90,40 @@ const data = {
   ]
 }
 
-const Home = () => {
+const Home = (props) => {
 
+  const [inputText, onInputChange] = useState('')
   const [node, setNode] = useState({})
+  const [isFetching, setFetchingStatus] = useState(true)
+
   const fetchData = async () => {
-    // const node = await axios('http://localhost:8080/')
-    const node = { data }
+    const node = await axios('http://localhost:8080/')
     setNode(node.data)
+    setFetchingStatus(false)
   }
 
   useEffect(() => {
     fetchData()
   }, [])
 
-  const areDataEmpty = () => !Object.keys(node).length
-
+  const search = () => {
+    const queryUrl = url.format({
+      pathname: 'search/',
+      query: { text: inputText}
+    })
+    props.history.push(queryUrl)
+  }
 
   return (
     <div>
-      { areDataEmpty()
+      <h1>home</h1>
+      <form>
+        <input type="text" onChange={(event) => onInputChange(event.target.value)}/>
+        <button onClick={search}>
+          Search
+        </button>
+      </form>
+      { isFetching
         ? <div className="loader" />
         : <Node {...node} />
       }
