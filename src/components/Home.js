@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios';
+import url from 'url'
 
 import { getSearchUrl } from '../utils'
 
@@ -21,7 +22,10 @@ const Home = (props) => {
   }
 
   const search = () => {
-    const queryUrl = getSearchUrl({ name: inputText })
+    const queryUrl = url.format({
+      pathname: 'search/',
+      query: { name: inputText }
+    })
     props.history.push(queryUrl)
   }
 
