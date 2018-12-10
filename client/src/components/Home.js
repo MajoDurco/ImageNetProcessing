@@ -4,6 +4,8 @@ import axios from 'axios';
 import { getSearchUrl } from '../utils'
 
 import Node from './Node'
+import SearchBar from './SearchBar'
+import Center from './Center'
 
 const Home = (props) => {
   const [inputText, onInputChange] = useState('')
@@ -19,7 +21,7 @@ const Home = (props) => {
   }
 
   const search = () => {
-    const queryUrl = getSearchUrl({ text: inputText })
+    const queryUrl = getSearchUrl({ name: inputText })
     props.history.push(queryUrl)
   }
 
@@ -29,13 +31,9 @@ const Home = (props) => {
 
   return (
     <div>
-      <h1>home</h1>
-      <form>
-        <input type="text" onChange={(event) => onInputChange(event.target.value)}/>
-        <button onClick={search}>
-          Search
-        </button>
-      </form>
+      <Center>
+        <SearchBar value={inputText} onChange={onInputChange} onSearch={search} />
+      </Center>
       { isFetching
         ? <div className="loader" />
         : <Node {...node} />

@@ -3,6 +3,8 @@ import axios from 'axios';
 import url from 'url'
 
 import SearchNode from './SearchNode'
+import SearchBar from './SearchBar'
+import Center from './Center'
 
 const Search = (props) => {
   const getSearchExpression = () => {
@@ -23,31 +25,28 @@ const Search = (props) => {
       port: 8080,
       query: { name: getSearchExpression() }
     })
+    const limit = 50;
     const { data } = await axios(queryUrl)
+    if (data.length < limit) setAllFetched(true)
     setNodes(data)
     setFetchingStatus(false)
   }
 
   useEffect(() => {
     getSearchResults()
-  }, [])
+  }, [props.history.location.search])
 
-  const onSearchClick = (event) => {
-    event.preventDefault()
+  const onSearchClick = () => {
     const queryUrl = url.format({
       query: { name: inputText }
     })
     props.history.push(queryUrl)
-    setFetchingStatus(true)
-    setNodes([])
-    getSearchResults()
   }
 
   const loadMore = async () => {
     const queryUrl = url.format({
       query: { name: inputText, lastId: nodes[nodes.length - 1]._id }
     })
-    console.log(queryUrl)
     const { data } = await axios(queryUrl)
     if (nodes.length + data.length === nodes.length) setAllFetched(true)
     else setNodes([...nodes, ...data])
@@ -55,13 +54,15 @@ const Search = (props) => {
 
   return (
     <div>
-      <h1>search</h1>
-      <form>
-        <input type="text" value={inputText} onChange={(event) => onInputChange(event.target.value)}/>
-        <button onClick={onSearchClick}>Search</button>
-      </form>
+      <Center>
+        <SearchBar value={inputText} onChange={onInputChange} onSearch={onSearchClick} />
+      </Center>
       { isFetching
-        ? <div className="loader" />
+        ? (
+          <Center style={{ paddingTop: '20px' }}>
+            <div className="loader" />
+          </Center>
+        )
         : nodes.map((node) => <SearchNode key={node._id} {...node} />)
       }
       { Boolean(nodes.length) && !allFetched &&

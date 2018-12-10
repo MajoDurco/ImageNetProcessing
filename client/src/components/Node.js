@@ -6,6 +6,14 @@ import { getSearchUrl, getNodeName } from '../utils'
 import ChevronDown from './icons/ChevronDown'
 import ChevronLeft from './icons/ChevronLeft'
 
+const style = {
+  titleWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    cursor: 'pointer'
+  }
+}
+
 const Node = ({ name, size }) => {
   const [children, setChildren] = useState([])
   const [expanded, toggleExpand] = useState(false)
@@ -29,8 +37,8 @@ const Node = ({ name, size }) => {
   }
 
   return (
-    <div style={{ paddingLeft: '15px'}}>
-      <div onClick={onExpand}>
+    <div style={{ paddingLeft: '20px'}}>
+      <div onClick={onExpand} style={style.titleWrapper}>
         <span style={{ visibility: size ? 'visible' : 'hidden' }}>
           {
             expanded
@@ -41,7 +49,11 @@ const Node = ({ name, size }) => {
         { getNodeName(name) } ({ size })
       </div>
       { isFetching
-        ? <div className="loader" />
+        ? (
+          <div style={{ paddingLeft: '20px' }}>
+            <div className="loader" />
+          </div>
+        )
         : Boolean(size) && children && expanded && children.map((child) => <Node key={child._id} {...child} />)
       }
     </div>
