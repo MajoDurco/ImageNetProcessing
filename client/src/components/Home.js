@@ -34,10 +34,12 @@ const Home = (props) => {
       <Center>
         <SearchBar value={inputText} onChange={onInputChange} onSearch={search} />
       </Center>
-      { isFetching
-        ? <div className="loader" />
-        : <Node {...node} />
-      }
+      <div style={{ paddingTop: '20px' }}>
+        { isFetching
+          ? <div className="loader" />
+          : <Node {...node} />
+        }
+      </div>
     </div>
   )
 }

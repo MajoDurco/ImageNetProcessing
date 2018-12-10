@@ -6,6 +6,17 @@ import SearchNode from './SearchNode'
 import SearchBar from './SearchBar'
 import Center from './Center'
 
+const styles = {
+  loadMoreButton: {
+    background: 'none',
+    border: '2px black solid',
+    borderRadius: '5px',
+    fontSize: '1.5em',
+    fontWidth: '800',
+    padding: '10px'
+  }
+}
+
 const Search = (props) => {
   const getSearchExpression = () => {
     const { query } = url.parse(props.location.search, true)
@@ -15,7 +26,7 @@ const Search = (props) => {
   const [inputText, onInputChange] = useState(getSearchExpression())
   const [nodes, setNodes] = useState([])
   const [isFetching, setFetchingStatus] = useState(true)
-  const [allFetched, setAllFetched] = useState(false)
+  const [allFetched, setAllFetched] = useState(true)
 
   const getSearchResults = async () => {
     const queryUrl = url.format({
@@ -27,13 +38,16 @@ const Search = (props) => {
     })
     const limit = 50;
     const { data } = await axios(queryUrl)
-    if (data.length < limit) setAllFetched(true)
+    if (data.length === limit) setAllFetched(false)
     setNodes(data)
     setFetchingStatus(false)
   }
 
   useEffect(() => {
     getSearchResults()
+    onInputChange(getSearchExpression())
+    setFetchingStatus(true)
+    setAllFetched(true)
   }, [props.history.location.search])
 
   const onSearchClick = () => {
@@ -57,16 +71,20 @@ const Search = (props) => {
       <Center>
         <SearchBar value={inputText} onChange={onInputChange} onSearch={onSearchClick} />
       </Center>
-      { isFetching
-        ? (
-          <Center style={{ paddingTop: '20px' }}>
-            <div className="loader" />
-          </Center>
-        )
-        : nodes.map((node) => <SearchNode key={node._id} {...node} />)
-      }
+      <div style={{ paddingTop: '20px' }}>
+        { isFetching
+          ? (
+            <Center>
+              <div className="loader" />
+            </Center>
+          )
+          : nodes.map((node) => <SearchNode key={node._id} {...node} />)
+        }
+      </div>
       { Boolean(nodes.length) && !allFetched &&
-        <button onClick={loadMore}>LoadMore</button>
+        <Center style={{ padding: '20px' }}>
+          <button style={styles.loadMoreButton} onClick={loadMore}>LoadMore</button>
+        </Center>
       }
     </div>
   )
