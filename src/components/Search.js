@@ -5,7 +5,7 @@ import url from 'url'
 import SearchNode from './SearchNode'
 import SearchBar from './SearchBar'
 import Center from './Center'
-import { getBackendSearchUrl } from '../utils'
+import { getSearchUrl } from '../utils'
 
 const styles = {
   loadMoreButton: {
@@ -30,7 +30,7 @@ const Search = (props) => {
   const [allFetched, setAllFetched] = useState(true)
 
   const getSearchResults = async () => {
-    const queryUrl = getBackendSearchUrl({ name: getSearchExpression() })
+    const queryUrl = getSearchUrl({ name: getSearchExpression() })
     const limit = 50;
     const { data } = await axios(queryUrl)
     if (data.length === limit) setAllFetched(false)
@@ -53,7 +53,7 @@ const Search = (props) => {
   }
 
   const loadMore = async () => {
-    const queryUrl = getBackendSearchUrl({ name: inputText, lastId: nodes[nodes.length - 1]._id })
+    const queryUrl = getSearchUrl({ name: inputText, lastId: nodes[nodes.length - 1]._id })
     const { data } = await axios(queryUrl)
     if (nodes.length + data.length === nodes.length) setAllFetched(true)
     else setNodes([...nodes, ...data])
