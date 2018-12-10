@@ -29,7 +29,7 @@ const Node = ({ name, size }) => {
   }
 
   const onExpand = () => {
-    if(!dataFetched) {
+    if(!dataFetched && size) {
       setFetched(true)
       fetchData()
     }
