@@ -6,7 +6,6 @@ async function saveData() {
   await Node.deleteMany() // delete all
   const parsedXml = await parsedData()
   const linearData = linearNodes(parsedXml.ImageNetStructure.synset[0], null)
-  console.log(linearData)
   return Node.insertMany(linearData)
 }
 
